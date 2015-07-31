@@ -146,4 +146,46 @@ class UserController extends Controller
             }
         }
     }
+
+    public function getResetPassword()
+    {
+        return view('users.password.reset');
+    }
+
+    public function postResetPassword()
+    {
+        $user = User::where('email', '=', Input::get('email'));
+
+        if($user->count()){
+            $user = $user->first();
+
+            //generate new code n password
+            $code = str_random(60);
+            $password = str_random(10);
+
+            $user->code = $code;
+            $user->password_tmp = bcrypt($password);
+
+            if($user->save()){
+
+                Mail::send('email.resetSendEmail',array(
+                    'link' =>\URL::action('UserController@getRecoverPassword',$code),
+                    'username' => $user->username,
+                    'password' => $password
+                ),function($message)use ($user){
+                    $message->to($user->email, $user->username)
+                            ->subject('new your password');
+                });
+
+                return redirect('account');
+            }
+        }else{
+            echo 'gagal reset, email salah';
+        }
+    }
+
+    public function getRecoverPassword($code)
+    {
+        return $code;
+    }
 }

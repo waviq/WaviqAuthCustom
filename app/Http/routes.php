@@ -53,4 +53,9 @@ Route::group(array('middleware' => 'guest'), function () {
         'uses' => 'UserController@postSignIn'
     ));
 
+    Route::get('account/reset-password','UserController@getResetPassword');
+    Route::post('account/reset-password','UserController@postResetPassword');
+
+    Route::get('account/recover-password/{code}', 'UserController@getRecoverPassword');
+
 });
