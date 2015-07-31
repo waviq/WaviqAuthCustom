@@ -24,6 +24,7 @@ Route::group(array('middleware'=>'auth'), function(){
 
 Route::group(array('middleware' => 'guest'), function () {
 
+    Route::get('user/{username}', 'ProfileController@user');
 
     Route::post('account/create', array(
         'as' => 'account-create-post',
